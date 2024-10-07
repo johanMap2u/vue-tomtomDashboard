@@ -11,7 +11,9 @@
     <div class="absolute z-10 bottom-0  text-center w-full">
       <button @click="loadIndonesiaData" class="bg-blue-500 text-white px-4 py-2">Indonesia</button>
       <button @click="loadTomTomData" class="bg-green-500 text-white px-4 py-2 ml-2">lebuhraya shah alam- guthrie</button>
-      <p class="text-lg text-gray-600 mt-2">This is the Demo</p>
+      <button @click="loadBentongData" class="bg-red-300 text-white px-4 py-2 ml-2">Pekan Bentong</button>
+
+      <p class="text-lg text-gray-600 mt-2">This is Johan Demo</p>
     </div>
     <MapTomTom :basemap="currentBaseMap" :routeData="currentRouteData"/>
   </div>
@@ -22,6 +24,8 @@ import { defineComponent,ref } from "vue";
 import MapTomTom from "./map/tomtom/MapTemplateLine.vue";
 import indonesiaData from "./map/tomtom/IndonesiaData.json";
 import tomtomData from "./map/tomtom/tomtomdata.json";
+import bentongData from "./map/tomtom/PekanBentong.json";
+
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export default defineComponent({
@@ -39,9 +43,13 @@ export default defineComponent({
     const loadTomTomData = () => {
       currentRouteData.value = tomtomData;
     };
+    const loadBentongData = () => {
+      currentRouteData.value = bentongData;
+    };
     return {
       currentRouteData,
       currentBaseMap,
+      loadBentongData,
       loadIndonesiaData,
       loadTomTomData,
     };
