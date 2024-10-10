@@ -1,48 +1,5 @@
 <template>
   <div>
-    
-    <div class="absolute z-10 w-full text-white">
-      <!-- zoom control -->
-      <p class="text-sm px-14 text-slate-500">This is the Demo</p>
-      <div class="flex w-full p-2">
-        <div class="border-2 rounded-full" @click="increaseZoom">
-          <div
-            class="hover:bg-slate-500 hover:rounded-full size-8 flex items-center justify-center"
-          >
-            <button class="pb-1">+</button>
-          </div>
-        </div>
-        <div class="px-3 py-1">Zoom Level : {{ currentZoom }}</div>
-        <div class="border-2 rounded-full" @click="decreaseZoom">
-          <div
-            class="hover:bg-slate-500 hover:rounded-full size-8 flex items-center justify-center"
-          >
-            <button class="pb-1">-</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- //basemap -->
-      <div class=" flex p-2 gap-1">
-        <div
-            class="px-2 bg-green-500"
-            @click="basemapChange('dark')"
-          >
-            <button class="pb-1">BaseMap Dark</button>
-          </div>
-          <div
-            class="px-2 bg-blue-500"
-            @click="basemapChange('darks')"
-          >
-            <button class="pb-1">basemap 2</button>
-          </div>
-      </div>
-
-    </div>
-
-
-
-
     <div class="absolute z-10 bottom-0 text-center w-full">
       <button
         @click="loadIndonesiaData"
@@ -65,6 +22,16 @@
 
       <p class="text-lg text-gray-600 mt-2">This is Johan Demo</p>
     </div>
+    <div class="absolute z-10 text-white right-0">
+      <ZoomMap :level="currentZoom" @increase-zoom="increaseZoom" @decrease-zoom="decreaseZoom" />
+    </div>
+    <div class="absolute z-10 text-white bottom-9 right-0">
+      <ToolkitMenu>
+          <div class="mx-2  bg-black">
+            <BaseMap @selected-basemap="basemapChange"/>
+          </div>
+      </ToolkitMenu>
+    </div>
     <MapTomTom
       @current-zoom="mapZoom"
       :basemap="currentBaseMap"
@@ -77,14 +44,17 @@
 <script>
 import { defineComponent, ref } from "vue";
 import MapTomTom from "./map/tomtom/MapTemplateLine.vue";
-import indonesiaData from "./map/tomtom/IndonesiaData.json";
-import tomtomData from "./map/tomtom/tomtomdata.json";
-import bentongData from "./map/tomtom/PekanBentong.json";
+import indonesiaData from "./map/tomtom/data/IndonesiaData.json";
+import tomtomData from "./map/tomtom/data/tomtomdata.json";
+import bentongData from "./map/tomtom/data/PekanBentong.json";
+import ToolkitMenu from "./components/side-menu/ToolkitMenu.vue";
+import ZoomMap from "./components/map-utility/ZoomMap.vue";
+import BaseMap from "./components/map-utility/BaseMap.vue";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export default defineComponent({
-  components: { MapTomTom },
+  components: { MapTomTom, ToolkitMenu, ZoomMap,BaseMap },
   setup() {
     const currentRouteData = ref(tomtomData);
     const zoomLevel = ref(12);
@@ -115,15 +85,9 @@ export default defineComponent({
       currentZoom.value -= 1;
     };
 
-    const basemapChange = (map)=>{
-      if(map === 'dark'){
-        console.log('basemap:dark',map)
-        currentBaseMap.value = 'mapbox://styles/mapbox/dark-v11'
-      }else {
-        console.log('basemap:light')
-        currentBaseMap.value = 'mapbox://styles/naqwal/cluc1135h005j01qq22febwjl'
-      }
-    }
+    const basemapChange = (map) => {
+      currentBaseMap.value = map
+    };
 
     return {
       currentRouteData,
