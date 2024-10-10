@@ -1,4 +1,7 @@
 <template>
+  <!-- <div class="scale-info">
+    Approximate Scale: 1 : {{ getScale(currentZoom).toLocaleString() }} km
+  </div> -->
   <div id="map" class="w-full h-screen"></div>
   <div v-if="hoveredObject" id="hover-box" :style="hoverBoxStyle">
     <p><strong>Average Speed:</strong> {{ hoveredObject.averageSpeed }} km/h</p>
@@ -13,16 +16,18 @@ import { MapboxOverlay } from "@deck.gl/mapbox";
 import { FlyToInterpolator } from "deck.gl"; // Import the FlyToInterpolator
 import RouteLayers from "./layer/RouteLayer.js";
 import RoutePoint from "./layer/IconLayer.js";
+import { LinearInterpolator } from "@deck.gl/core";
 
 export default defineComponent({
   props: {
-    routeData: Object, 
-    basemap:String
+    routeData: Object,
+    basemap: String,
+    zoom: Number,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const mapRef = ref(null);
     const hoveredObject = ref(null);
-    const activeLayerIds = ref([]); 
+    const activeLayerIds = ref([]);
 
     const hoverBoxStyle = reactive({
       position: "absolute",
@@ -73,7 +78,7 @@ export default defineComponent({
         Object.assign(hoverBoxStyle, {
           left: `${info.x + 10}px`,
           top: `${info.y + 10}px`,
-          zIndex:'10'
+          zIndex: "10",
         });
       }
     };
@@ -164,20 +169,67 @@ export default defineComponent({
       map.on("load", () => {
         renderMapLayers();
       });
+
+      map.on("move", () => {
+        // console.log('map move',map.getZoom().toFixed(0))
+        console.log("map move", getScale(map.getZoom()));
+      });
+      emit("current-zoom", Math.round(map.getZoom()));
     });
+
+    const getScale = (zoom) => {
+      if (mapRef.value) {
+        const distancePerPixelAtEquator = 156543.03 / Math.pow(2, zoom);
+        const mapWidthInPixels = mapRef.value.getContainer().clientWidth;
+        const km = (distancePerPixelAtEquator * mapWidthInPixels) / 1000;
+        console.log('Distance zoom:',km.toFixed(0))
+      }
+
+      return 0;
+    };
 
     watch(
       () => props.routeData,
       () => {
-        removeCurrentLayers(); 
-        transitionToNewView(); 
-        renderMapLayers(); 
+        removeCurrentLayers();
+        transitionToNewView();
+        renderMapLayers();
+      }
+    );
+
+    watch(
+      () => props.zoom,
+      (newZoom) => {
+        if (mapRef.value) {
+          // console.log('zoom current:',mapRef.value.getZoom())
+          // const level = mapRef.value.getZoom() + newZoom
+          mapRef.value.zoomTo(newZoom);
+          getScale(newZoom);
+          emit("current-zoom", newZoom);
+        }
+      }
+    );
+
+    watch(
+      () => props.basemap,
+      (value) => {
+        if (mapRef.value) {
+          mapRef.value.setStyle(value);
+        }
+      }
+    );
+
+    watch(
+      () => mapRef.value,
+      (value) => {
+        console.log("Map move:", value);
       }
     );
 
     return {
       mapRef,
       hoveredObject,
+      getScale,
       hoverBoxStyle,
     };
   },
