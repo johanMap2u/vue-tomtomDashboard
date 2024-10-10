@@ -10,14 +10,14 @@
       />
     </div>
 
-    <div
+    <!-- <div
       class="flex justify-center items-center my-2 bg-opacity-10 text-2xl bg-black text-center size-10 group"
     >
       {{level}}
-    </div>
+    </div> -->
 
     <div
-      class="flex justify-center items-center bg-slate-800 text-center size-10 group"
+      class="flex mt-2 justify-center items-center bg-slate-800 text-center size-10 group"
       @click="decreaseZoom"
     >
       <v-icon

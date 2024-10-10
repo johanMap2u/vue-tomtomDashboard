@@ -1,7 +1,4 @@
 <template>
-  <!-- <div class="scale-info">
-    Approximate Scale: 1 : {{ getScale(currentZoom).toLocaleString() }} km
-  </div> -->
   <div id="map" class="w-full h-screen"></div>
   <div v-if="hoveredObject" id="hover-box" :style="hoverBoxStyle">
     <p><strong>Average Speed:</strong> {{ hoveredObject.averageSpeed }} km/h</p>
@@ -42,6 +39,7 @@ export default defineComponent({
     });
 
     const getPathData = () => {
+      // console.log('delay time:',props.routeData.delayTime)
       return props.routeData.detailedSegments.map((segment) => ({
         path: segment.shape.map((point) => [point.longitude, point.latitude]),
         averageSpeed: segment.averageSpeed,
@@ -84,8 +82,8 @@ export default defineComponent({
     };
     const getColor = (averageSpeed, currentSpeed) => {
       //   const ratio = currentSpeed / averageSpeed;
-      if (averageSpeed >= 60) return [0, 255, 0];
-      if (averageSpeed >= 30) return [255, 255, 0];
+      if (currentSpeed >= 60) return [0, 255, 0];
+      if (currentSpeed >= 30) return [255, 255, 0];
       //   if (ratio >= 1) return [0, 255, 0]; // Green
       //   if (ratio >= 0.7) return [255, 255, 0]; // Yellow
       return [255, 0, 0]; // Red
@@ -96,7 +94,6 @@ export default defineComponent({
       const pathData = getPathData();
       const routeLayerId = "tomtom-layer";
       const iconLayerId = "start-end-icons";
-
       const layers = [
         new RouteLayers({
           id: routeLayerId,
@@ -172,7 +169,8 @@ export default defineComponent({
 
       map.on("move", () => {
         // console.log('map move',map.getZoom().toFixed(0))
-        console.log("map move", getScale(map.getZoom()));
+        // console.log("map move", getScale(map.getZoom()));
+        emit("distance-km", getScale(map.getZoom()));
       });
       emit("current-zoom", Math.round(map.getZoom()));
     });
@@ -182,7 +180,8 @@ export default defineComponent({
         const distancePerPixelAtEquator = 156543.03 / Math.pow(2, zoom);
         const mapWidthInPixels = mapRef.value.getContainer().clientWidth;
         const km = (distancePerPixelAtEquator * mapWidthInPixels) / 1000;
-        console.log('Distance zoom:',km.toFixed(0))
+        // console.log('Distance zoom:',km.toFixed(0))
+        return km.toFixed(0)
       }
 
       return 0;

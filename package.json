@@ -12,6 +12,7 @@
     "@deck.gl/core": "^9.0.32",
     "@deck.gl/layers": "^9.0.32",
     "@deck.gl/mapbox": "^9.0.32",
+    "axios": "^1.7.7",
     "deck.gl": "^9.0.32",
     "mapbox-gl": "^3.7.0",
     "maplibre-gl": "^4.7.1",
