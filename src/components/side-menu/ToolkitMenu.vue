@@ -8,7 +8,7 @@
     <div class="pt-14">
       <div
         :class="[
-          'bg-black h-32  flex px-2 py-2 gap-2 rounded-l-xl transition-all duration-1000 ease-in-out',
+          'bg-black h-48  flex px-2 py-2 gap-2 rounded-l-xl transition-all duration-1000 ease-in-out',
           { 'w-96': !toolkit, 'w-16': toolkit },
         ]"
       >
@@ -28,10 +28,17 @@
 
           <div
             class="flex justify-center items-center text-center size-10 group"
+          >
+            <v-icon name="hi-information-circle" class="size-10 text-slate-700 group-hover:text-white" />
+          </div>
+
+          <div
+            class="flex justify-center items-center text-center size-10 group"
             @click="baseMpExpand"
           >
             <v-icon name="fa-layer-group" class="size-8 text-slate-700 group-hover:text-white" />
           </div>
+          
         </div>
         
         <div
@@ -48,10 +55,10 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import { FaLayerGroup, MdKeyboardarrowleft } from "oh-vue-icons/icons";
+import { FaLayerGroup, MdKeyboardarrowleft ,HiInformationCircle} from "oh-vue-icons/icons";
 
 
-addIcons(MdKeyboardarrowleft, FaLayerGroup);
+addIcons(MdKeyboardarrowleft, FaLayerGroup,HiInformationCircle);
 export default defineComponent({
   components: { "v-icon": OhVueIcon },
   setup() {

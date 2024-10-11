@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <div class="absolute z-10 bottom-0 text-center w-full">
+    <div class="absolute z-10 bottom-10 text-center w-full">
       <button
         @click="loadIndonesiaData"
         class="bg-blue-500 text-white px-4 py-2"
@@ -21,7 +21,7 @@
       </button>
 
       <p class="text-lg text-gray-600 mt-2">This is Johan Demo</p>
-    </div> -->
+    </div>
     <div class="absolute z-10 text-white p-2 bottom-8">
       <div class="flex gap-2">
         <DisplayData :TomtomData="`${zoomDistance} km`"/>
@@ -33,16 +33,15 @@
     <div class="absolute z-10 text-white p-2 top-20 pl-16">
       <MdCard />
     </div>
-    <div class="absolute z-10 text-white right-0">
+    
+    <div class="absolute z-10 text-white bottom-9 right-0">
       <ZoomMap
         :level="currentZoom"
         @increase-zoom="increaseZoom"
         @decrease-zoom="decreaseZoom"
       />
-    </div>
-    <div class="absolute z-10 text-white bottom-9 right-0">
       <ToolkitMenu>
-        <div class="mx-2 bg-black">
+        <div class="mx-2 mt-16 bg-black">
           <BaseMap @selected-basemap="basemapChange" />
         </div>
       </ToolkitMenu>
@@ -69,6 +68,7 @@ import BaseMap from "./components/map-utility/BaseMap.vue";
 import DisplayData from "./components/card/DisplayData.vue";
 
 import { useTomTomStore } from "./stores/useTomTomStore";
+import { useBentongStore } from "./stores/useBentongStore";
 
 import MdCard from "./components/card/MdCard.vue";
 
@@ -78,17 +78,20 @@ export default defineComponent({
   components: { MapTomTom, ToolkitMenu, ZoomMap, BaseMap, MdCard,DisplayData },
   setup() {
     const currentRouteData = ref(tomtomData);
-    const zoomDistance = ref(12);
+    const zoomDistance = ref(14);
     const currentZoom = ref(0);
     const tomTomStore = useTomTomStore();
+    const bentongStore = useBentongStore();
     const delayTime = ref(0);
     const travelTimeTom = ref(0);
+    const selectedRoute = ref("lebuhraya shah alam- guthrie")
     // const currentBaseMap = ref('mapbox://styles/naqwal/cluc1135h005j01qq22febwjl')
     // const currentBaseMap = ref('mapbox://styles/naqwal/cluaoa6te00ag01r53d1z1zi6')
     const currentBaseMap = ref("mapbox://styles/mapbox/dark-v11");
 
     onMounted(() => {
       tomTomStore.startAutoUpdate();
+      bentongStore.startAutoUpdate()
     });
 
     const loadIndonesiaData = () => {
@@ -98,9 +101,14 @@ export default defineComponent({
     const loadTomTomData = () => {
       const latestData = tomTomStore.getLatestRouteData;
       currentRouteData.value = latestData || tomtomData;
+      // console.log('route name:',latestData.routeName)
+      selectedRoute.value = latestData.routeName
     };
     const loadBentongData = () => {
-      currentRouteData.value = bentongData;
+      const latestData = bentongStore.getLatestRouteData;
+      currentRouteData.value = latestData||bentongData;
+      // console.log('route name:',latestData.routeName)
+      selectedRoute.value = latestData.routeName
     };
 
     const mapZoom = (value) => {
@@ -135,7 +143,18 @@ export default defineComponent({
     watch(
       () => tomTomStore.getLatestRouteData,
       (value) => {
-        if (value.routeName === "lebuhraya shah alam- guthrie") {
+        if (value.routeName === selectedRoute.value) {
+          delayTime.value = formatTomTomTime(value.delayTime);
+          travelTimeTom.value = formatTomTomTime(value.travelTime);
+          currentRouteData.value = value;
+        }
+      }
+    );
+
+    watch(
+      () => bentongStore.getLatestRouteData,
+      (value) => {
+        if (value.routeName === selectedRoute.value) {
           delayTime.value = formatTomTomTime(value.delayTime);
           travelTimeTom.value = formatTomTomTime(value.travelTime);
           currentRouteData.value = value;

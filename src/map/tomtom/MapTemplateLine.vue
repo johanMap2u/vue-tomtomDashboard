@@ -124,9 +124,9 @@ export default defineComponent({
           props.routeData.routePathPoints[0].longitude,
           props.routeData.routePathPoints[0].latitude,
         ],
-        zoom: 12,
-        pitch: 55,
-        bearing: 8,
+        // zoom: props.zoom,
+        // pitch: 55,
+        // bearing: 8,
         speed: 2,
         transitionDuration: 3000,
         transitionInterpolator: new FlyToInterpolator({ speed: 2 }),
@@ -156,7 +156,7 @@ export default defineComponent({
           props.routeData.routePathPoints[0].longitude,
           props.routeData.routePathPoints[0].latitude,
         ],
-        zoom: 12,
+        zoom: 14,
         pitch: 55,
         bearing: 8,
       });
@@ -166,7 +166,6 @@ export default defineComponent({
       map.on("load", () => {
         renderMapLayers();
       });
-
       map.on("move", () => {
         // console.log('map move',map.getZoom().toFixed(0))
         // console.log("map move", getScale(map.getZoom()));
