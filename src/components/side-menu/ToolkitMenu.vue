@@ -28,6 +28,7 @@
 
           <div
             class="flex justify-center items-center text-center size-10 group"
+            @click="infotoggle"
           >
             <v-icon name="hi-information-circle" class="size-10 text-slate-700 group-hover:text-white" />
           </div>
@@ -43,9 +44,9 @@
         
         <div
           v-if="!toolkit"
-          class="ml-4 w-full text-black bg-white transition-opacity duration-500"
+          class="ml-4 w-full text-white transition-opacity duration-500"
         >
-          <p>This is demo md menu</p>
+          <slot name="route-selected"/>
         </div>
       </div>
     </div>
@@ -59,9 +60,15 @@ import { FaLayerGroup, MdKeyboardarrowleft ,HiInformationCircle} from "oh-vue-ic
 
 
 addIcons(MdKeyboardarrowleft, FaLayerGroup,HiInformationCircle);
+
 export default defineComponent({
   components: { "v-icon": OhVueIcon },
-  setup() {
+  props:{
+    information:{
+      type:String
+    }
+  },
+  setup(props,{emit}) {
     const toolkit = ref(true);
     const baseMapExpand = ref(true);
     const toolExpand = () => {
@@ -71,11 +78,17 @@ export default defineComponent({
     const baseMpExpand = () => {
       baseMapExpand.value = !baseMapExpand.value;
     };
+
+    const infotoggle=()=>{
+      emit("info-toggle")
+    }
+
     return {
       baseMpExpand,
       toolExpand,
       baseMapExpand,
       toolkit,
+      infotoggle,
     };
   },
 });
